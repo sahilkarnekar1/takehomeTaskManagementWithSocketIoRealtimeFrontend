@@ -373,8 +373,8 @@ fetchTasks();
       <List
         grid={{ gutter: 16, column: 1 }}
         dataSource={tasks}
-        renderItem={(task) => (
-          <List.Item key={task._id}>
+        renderItem={(task,index) => (
+          <List.Item key={index}>
             <Card
               title={task.title}
               actions={[
