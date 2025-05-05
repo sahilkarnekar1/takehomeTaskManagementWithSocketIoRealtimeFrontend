@@ -50,12 +50,7 @@ const [overdueSinceDate, setOverdueSinceDate] = useState(null);
 const [startDate, setStartDate] = useState(null);
 const [endDate, setEndDate] = useState(null);
 
-
-
-  const token = JSON.parse(window.name)?.token;
-console.log(token);
-
-
+const token = localStorage.getItem("token");
   useEffect(()=>{
 const newSocket = getSocket();
 setSocket(newSocket);

@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 import { API_BASE_URL } from "../api/api";
 
 export default function TeamTaskManagement() {
-  const token = JSON.parse(window.name)?.token;
+  const token = localStorage.getItem("token");
   const selectedTeamId = localStorage.getItem("selectedTeamId");
 
   const [modalOpen, setModalOpen] = useState(false);

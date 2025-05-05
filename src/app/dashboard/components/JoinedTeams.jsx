@@ -14,7 +14,7 @@ export default function JoinedTeams() {
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
   const router = useRouter();
 
-  const token = JSON.parse(window.name)?.token;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchTeams();

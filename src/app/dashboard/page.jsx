@@ -6,29 +6,17 @@ import { Modal, Input, Button, message } from "antd";
 import axios from "axios";
 import JoinedTeams from "./components/JoinedTeams";
 import { API_BASE_URL } from "../api/api";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   const router = useRouter();
   const [openCreateTeamModal, setOpenCreateTeamModal] = useState(false);
   const [teamName, setTeamName] = useState("");
-  
-  const [token, setToken] = useState(null);
-
-  // Safe token access using useEffect
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const storedToken = JSON.parse(window.name)?.token;
-        setToken(storedToken);
-      } catch (e) {
-        console.error("Invalid token format in window.name");
-      }
-    }
-  }, []);
+  const token = localStorage.getItem("token");
 
   const handleCreateTeam = async () => {
     if (!token) {
-      message.error("You must be logged in");
+      toast.error("You must be logged in");
       return;
     }
   

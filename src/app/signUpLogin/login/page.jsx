@@ -19,7 +19,7 @@ try {
     });
     if (res.status === 200) {
       alert("Login successful");
-      window.name = JSON.stringify({ token: res.data.token });
+      localStorage.setItem("token", res.data.token);
       router.push("/dashboard");
     }
 } catch (error) {
