@@ -378,10 +378,10 @@ fetchTasks();
             <Card
               title={task.title}
               actions={[
-                <Button type="link" onClick={() => openEditModal(task)}>
+                <Button key={index+2} type="link" onClick={() => openEditModal(task)}>
                   Update
                 </Button>,
-                <Button danger type="link" onClick={() => handleDeleteTask(task)}>
+                <Button key={index+4} danger type="link" onClick={() => handleDeleteTask(task)}>
                   Delete
                 </Button>,
               ]}
