@@ -12,7 +12,19 @@ export default function Dashboard() {
   const [openCreateTeamModal, setOpenCreateTeamModal] = useState(false);
   const [teamName, setTeamName] = useState("");
   
-  const token = JSON.parse(window.name)?.token;
+  const [token, setToken] = useState(null);
+
+  // Safe token access using useEffect
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const storedToken = JSON.parse(window.name)?.token;
+        setToken(storedToken);
+      } catch (e) {
+        console.error("Invalid token format in window.name");
+      }
+    }
+  }, []);
 
   const handleCreateTeam = async () => {
     if (!token) {
