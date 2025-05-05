@@ -1,11 +1,12 @@
 
 import { io } from "socket.io-client";
+import { API_BASE_URL } from "../api/api";
 
 let socket = null;
 
 export const getSocket = () => {
   if (!socket) {
-    socket = io("http://localhost:5000");
+    socket = io(`${API_BASE_URL}`);
   }
   return socket;
 };

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, List, message, Button, Modal, Input, Avatar, Checkbox } from "antd";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/app/api/api";
 
 export default function JoinedTeams() {
   const [teams, setTeams] = useState([]);
@@ -25,7 +26,7 @@ export default function JoinedTeams() {
     }
 
     try {
-      const res = await axios.get("http://localhost:5000/api/team/my-teams", {
+      const res = await axios.get(`${API_BASE_URL}/api/team/my-teams`, {
         headers: { "x-auth-token": token },
       });
       setTeams(res.data);
@@ -37,7 +38,7 @@ export default function JoinedTeams() {
 
   const openAddMemberModal = async (teamId) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/team/${teamId}/non-members`, {
+      const res = await axios.get(`${API_BASE_URL}/api/team/${teamId}/non-members`, {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": token,
@@ -67,7 +68,7 @@ export default function JoinedTeams() {
 
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/team/${selectedTeamId}/add-members`,
+        `${API_BASE_URL}/api/team/${selectedTeamId}/add-members`,
         { memberIds: selectedMemberIds }, // Array of IDs
         {
           headers: {

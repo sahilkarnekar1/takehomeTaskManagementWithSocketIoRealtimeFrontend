@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Button, Input, Select } from "antd";
+import { API_BASE_URL } from "@/app/api/api";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -16,7 +17,7 @@ export default function SignupPage() {
     e.preventDefault();
 
     try {
-        const res = await axios.post("http://localhost:5000/api/auth/register",{
+        const res = await axios.post(`${API_BASE_URL}/api/auth/register`,{
             name,
             email,
             password,

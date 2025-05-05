@@ -20,6 +20,7 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isBetween from "dayjs/plugin/isBetween";
 import { getSocket } from "@/app/socketConfig/getSocket";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "@/app/api/api";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
@@ -81,7 +82,7 @@ setSocket(newSocket);
   const getUserProfile = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/team/getUserFromToken",
+        `${API_BASE_URL}/api/team/getUserFromToken`,
         {
           headers: { "x-auth-token": token },
         }
@@ -102,7 +103,7 @@ console.log(tasks);
   const fetchTasks = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/task/getMyTasksInTeam/${teamId}`,
+        `${API_BASE_URL}/api/task/getMyTasksInTeam/${teamId}`,
         {
           headers: { "x-auth-token": token },
         }
@@ -133,7 +134,7 @@ console.log(tasks);
 
     try {
       await axios.put(
-        `http://localhost:5000/api/task/updateTask/${editingTask._id}`,
+        `${API_BASE_URL}/api/task/updateTask/${editingTask._id}`,
         {
           title,
           description,
@@ -171,7 +172,7 @@ console.log(tasks);
   const openAssigneeModal = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/team/${teamId}/getTeamMembers`,
+        `${API_BASE_URL}/api/team/${teamId}/getTeamMembers`,
         {
           headers: { "x-auth-token": token },
         }
@@ -198,7 +199,7 @@ console.log(tasks);
   const handleDeleteTask = async (task) => {
     const taskId = task._id;
     try {
-      await axios.delete(`http://localhost:5000/api/task/deleteTask/${taskId}`, {
+      await axios.delete(`${API_BASE_URL}/api/task/deleteTask/${taskId}`, {
         headers: { "x-auth-token": token },
       });
       message.success("Task deleted");

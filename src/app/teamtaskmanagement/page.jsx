@@ -15,6 +15,7 @@ import axios from "axios";
 import TaskList from "../teamtaskmanagement/components/TaskList";
 import { clearSocket, getSocket } from "../socketConfig/getSocket";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../api/api";
 
 export default function TeamTaskManagement() {
   const token = JSON.parse(window.name)?.token;
@@ -54,7 +55,7 @@ return () => {
 
     try {
     const res =  await axios.post(
-        "http://localhost:5000/api/task/createTask",
+        `${API_BASE_URL}/api/task/createTask`,
         {
           title,
           description,
@@ -97,7 +98,7 @@ console.log(res);
   const openAssigneeModal = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/team/${selectedTeamId}/getTeamMembers`,
+        `${API_BASE_URL}/api/team/${selectedTeamId}/getTeamMembers`,
         {
           headers: {
             "x-auth-token": token,

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Modal, Input, Button, message } from "antd";
 import axios from "axios";
 import JoinedTeams from "./components/JoinedTeams";
+import { API_BASE_URL } from "../api/api";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function Dashboard() {
   
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/team",
+        `${API_BASE_URL}/api/team`,
         { name: teamName }, // this is the body
         {
           headers: {
