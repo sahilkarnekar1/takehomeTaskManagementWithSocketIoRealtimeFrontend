@@ -18,7 +18,6 @@ import { toast } from "react-toastify";
 import { API_BASE_URL } from "../api/api";
 
 export default function TeamTaskManagement() {
-  const token = localStorage.getItem("token");
   const selectedTeamId = localStorage.getItem("selectedTeamId");
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -33,7 +32,12 @@ export default function TeamTaskManagement() {
   const [teamMembers, setTeamMembers] = useState([]);
   const [selectedMemberId, setSelectedMemberId] = useState("");
   const [socket, setSocket] = useState(null);
-
+  const [token, setToken] = useState("");
+  useEffect(()=>{
+    const tokenFromLocal = localStorage.getItem("token");
+    setToken(tokenFromLocal);
+  },[])
+  
   useEffect(()=>{
 const newSocket = getSocket();
 setSocket(newSocket);
