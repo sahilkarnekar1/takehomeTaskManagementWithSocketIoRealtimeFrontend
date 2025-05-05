@@ -10,15 +10,9 @@ import { API_BASE_URL } from "../api/api";
 export default function Dashboard() {
   const router = useRouter();
   const [openCreateTeamModal, setOpenCreateTeamModal] = useState(false);
-  const [teamName, setTeamName] = useState("");  
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedToken = JSON.parse(window.name)?.token;
-      setToken(storedToken);
-    }
-  }, []);
+  const [teamName, setTeamName] = useState("");
+  
+  const token = JSON.parse(window.name)?.token;
 
   const handleCreateTeam = async () => {
     if (!token) {
