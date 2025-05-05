@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 import { API_BASE_URL } from "../api/api";
 
 export default function TeamTaskManagement() {
-  const selectedTeamId = localStorage.getItem("selectedTeamId");
+
 
   const [modalOpen, setModalOpen] = useState(false);
   const [assigneeModalOpen, setAssigneeModalOpen] = useState(false);
@@ -33,10 +33,13 @@ export default function TeamTaskManagement() {
   const [selectedMemberId, setSelectedMemberId] = useState("");
   const [socket, setSocket] = useState(null);
   const [token, setToken] = useState("");
+  const [selectedTeamId, setselectedTeamId] = useState("");
 
   useEffect(()=>{
     const tokenFromLocal = localStorage.getItem("token");
+    const selectedTeamIdLocal = localStorage.getItem("selectedTeamId");
     setToken(tokenFromLocal);
+    setselectedTeamId(selectedTeamIdLocal);
   },[])
 
   useEffect(()=>{
