@@ -12,7 +12,11 @@ export default function Dashboard() {
   const router = useRouter();
   const [openCreateTeamModal, setOpenCreateTeamModal] = useState(false);
   const [teamName, setTeamName] = useState("");
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState("");
+  useEffect(()=>{
+    const tokenFromLocal = localStorage.getItem("token");
+    setToken(tokenFromLocal);
+  },[])
 
   const handleCreateTeam = async () => {
     if (!token) {
