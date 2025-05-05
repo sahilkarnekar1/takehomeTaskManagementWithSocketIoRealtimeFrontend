@@ -374,7 +374,7 @@ fetchTasks();
         grid={{ gutter: 16, column: 1 }}
         dataSource={tasks}
         renderItem={(task) => (
-          <List.Item>
+          <List.Item key={task._id}>
             <Card
               title={task.title}
               actions={[
@@ -477,7 +477,7 @@ fetchTasks();
           <List
             dataSource={teamMembers}
             renderItem={(member, index) => (
-              <List.Item style={{ display: "flex", alignItems: "center" }}>
+              <List.Item key={index} style={{ display: "flex", alignItems: "center" }}>
                 <Radio value={member._id} style={{ marginRight: 12 }} />
                 <List.Item.Meta
                   avatar={

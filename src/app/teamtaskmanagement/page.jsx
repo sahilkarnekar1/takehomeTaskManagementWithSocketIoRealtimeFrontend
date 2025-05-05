@@ -196,7 +196,7 @@ console.log(res);
           <List
             dataSource={teamMembers}
             renderItem={(member, index) => (
-              <List.Item style={{ display: "flex", alignItems: "center" }}>
+              <List.Item key={member._id} style={{ display: "flex", alignItems: "center" }}>
                 <Radio value={member._id} style={{ marginRight: 12 }} />
                 <List.Item.Meta
                   avatar={

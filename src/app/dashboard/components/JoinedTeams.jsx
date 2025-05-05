@@ -98,7 +98,7 @@ export default function JoinedTeams() {
         grid={{ gutter: 16, column: 2 }}
         dataSource={teams}
         renderItem={(team) => (
-          <List.Item>
+          <List.Item key={team._id}>
             <Card
             onClick={()=> {
                 localStorage.setItem("selectedTeamId", team._id);
@@ -146,7 +146,7 @@ export default function JoinedTeams() {
           itemLayout="horizontal"
           dataSource={nonTeamMembersList}
           renderItem={(item, index) => (
-            <List.Item>
+            <List.Item key={index}>
               <Checkbox
                 onChange={() => handleMemberCheckbox(item._id)}
                 checked={selectedMemberIds.includes(item._id)}
