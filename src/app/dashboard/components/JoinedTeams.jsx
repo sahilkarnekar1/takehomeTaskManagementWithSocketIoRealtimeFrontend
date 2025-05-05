@@ -4,6 +4,7 @@ import { Card, List, message, Button, Modal, Input, Avatar, Checkbox } from "ant
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/app/api/api";
+import { toast } from "react-toastify";
 
 export default function JoinedTeams() {
   const [teams, setTeams] = useState([]);
@@ -21,7 +22,7 @@ export default function JoinedTeams() {
 
   const fetchTeams = async () => {
     if (!token) {
-      message.error("You must be logged in to view your teams");
+      toast.error("You must be logged in to view your teams");
       return;
     }
 
@@ -32,7 +33,7 @@ export default function JoinedTeams() {
       setTeams(res.data);
     } catch (err) {
       console.error(err);
-      message.error("Failed to fetch teams");
+      toast.error("Failed to fetch teams");
     }
   };
 
@@ -51,7 +52,7 @@ export default function JoinedTeams() {
       setModalOpen(true);
     } catch (error) {
       console.error(error);
-      message.error("Failed to load available members");
+      toast.error("Failed to load available members");
     }
   };
 
@@ -62,9 +63,9 @@ export default function JoinedTeams() {
   };
 
   const handleAddMember = async () => {
-    if (!token) return message.error("Not authenticated");
+    if (!token) return toast.error("Not authenticated");
 
-    if (selectedMemberIds.length === 0) return message.warning("Select at least one user");
+    if (selectedMemberIds.length === 0) return toast.warning("Select at least one user");
 
     try {
       const res = await axios.put(
@@ -84,7 +85,7 @@ export default function JoinedTeams() {
       fetchTeams();
     } catch (err) {
       console.error(err);
-      message.error(err.response?.data || "Failed to add members");
+      toast.error(err.response?.data || "Failed to add members");
     }
   };
 
