@@ -33,11 +33,12 @@ export default function TeamTaskManagement() {
   const [selectedMemberId, setSelectedMemberId] = useState("");
   const [socket, setSocket] = useState(null);
   const [token, setToken] = useState("");
+
   useEffect(()=>{
     const tokenFromLocal = localStorage.getItem("token");
     setToken(tokenFromLocal);
   },[])
-  
+
   useEffect(()=>{
 const newSocket = getSocket();
 setSocket(newSocket);
@@ -50,7 +51,7 @@ return () => {
     if(socket){
       socket.emit('connectedUserForTeam', token);
     }
-  },[socket]);
+  },[socket, token]);
 
   const handleCreateTask = async () => {
     if (!title || !description || !assignedTo || !dueDate) {
