@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/app/api/api";
 import { toast } from "react-toastify";
+import { getUserProfileData } from "@/app/UserData/getUserProfileData";
 
 export default function JoinedTeams({triggerForFetchTeams}) {
   const [teams, setTeams] = useState([]);
@@ -13,6 +14,7 @@ export default function JoinedTeams({triggerForFetchTeams}) {
   const [nonTeamMembersList, setNonTeamMembersList] = useState([]);
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
   const [loading, setLoading] = useState(false);
+   const [userProfile, setUserProfile] = useState(null);
   const router = useRouter();
 
   const [token, setToken] = useState("");
@@ -101,6 +103,18 @@ setLoading(true);
     }
   };
 
+    useEffect(()=>{
+      if(token){
+       getUserProfileData(token).then((userInfo) => {
+        if (userInfo) {
+          setUserProfile(userInfo);
+        } else {
+          toast.error("Failed to fetch user profile");
+        }
+      }
+      );
+      }
+    },[token]);
   console.log(teams);
   
 
@@ -121,7 +135,10 @@ setLoading(true);
             }}
               title={team.name}
               extra={
-                <Button
+                <>
+                 {
+                  userProfile?.role === "TeamLeader" && (
+                    <Button
                     size="small"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent triggering card click
@@ -130,6 +147,11 @@ setLoading(true);
                   >
                   Add Team Member
                 </Button>
+                  )
+                }
+                </>
+               
+                
               }
             >
               <p>

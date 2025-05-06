@@ -7,6 +7,7 @@ import axios from "axios";
 import JoinedTeams from "./components/JoinedTeams";
 import { API_BASE_URL } from "../api/api";
 import { toast } from "react-toastify";
+import { getUserProfileData } from "../UserData/getUserProfileData";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function Dashboard() {
   const [trigger, setTrigger] = useState(false);
    const [loading, setLoading] = useState(false);
   const [token, setToken] = useState("");
+  const [userProfile, setUserProfile] = useState(null);
  let tokenLocal = "";
   useEffect(()=>{
     tokenLocal = JSON.parse(window.name)?.token;
@@ -55,14 +57,42 @@ export default function Dashboard() {
     }
   };
 
+  useEffect(()=>{
+    if(token){
+     getUserProfileData(token).then((userInfo) => {
+      if (userInfo) {
+        setUserProfile(userInfo);
+      } else {
+        toast.error("Failed to fetch user profile");
+      }
+    }
+    );
+    }
+  },[token]);
+console.log(userProfile);
+
   return (
     <>
     
     <div style={{ padding: 20 }}>
+      {
+        userProfile !== null && (
+          <>
+          <p>Name : {userProfile.name}</p>
+          <p>UserType : {userProfile.role}</p>
+          <p>{userProfile.role !== "TeamLeader" && "Note : Only TeamLeader can create a team"} </p>
+          </>
+        )
+      }
       <h2>Welcome to Dashboard</h2>
-      <Button type="primary" onClick={() => setOpenCreateTeamModal(true)}>
-        Create Team
-      </Button>
+      {
+        userProfile?.role === "TeamLeader" && (
+          <Button type="primary" onClick={() => setOpenCreateTeamModal(true)}>
+          Create Team
+        </Button>
+        )
+      }
+     
 
       <Modal
         title="Create New Team"

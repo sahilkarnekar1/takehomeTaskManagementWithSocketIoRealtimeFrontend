@@ -148,7 +148,6 @@ console.log(res);
 <>
 <div>
       <h1>Team Task Management</h1>
-      <p>Selected Team ID: {selectedTeamId}</p>
 
       <Button type="primary" onClick={() => setModalOpen(true)}>
         Add Task
