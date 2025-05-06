@@ -32,14 +32,16 @@ export default function TeamTaskManagement() {
   const [teamMembers, setTeamMembers] = useState([]);
   const [selectedMemberId, setSelectedMemberId] = useState("");
   const [socket, setSocket] = useState(null);
-  const [token, setToken] = useState("");
   const [selectedTeamId, setselectedTeamId] = useState("");
-
+  const [token, setToken] = useState("");
+ let tokenLocal = "";
+ let selectedTeamIdLocal = "";
   useEffect(()=>{
-    const tokenFromLocal = localStorage.getItem("token");
-    const selectedTeamIdLocal = localStorage.getItem("selectedTeamId");
-    setToken(tokenFromLocal);
-    setselectedTeamId(selectedTeamIdLocal);
+    tokenLocal = JSON.parse(window.name)?.token;
+    selectedTeamIdLocal = localStorage.getItem("selectedTeamId");
+  
+    setToken(tokenLocal ?? "");
+    setselectedTeamId(selectedTeamIdLocal ?? "");
   },[])
 
   useEffect(()=>{
@@ -142,7 +144,12 @@ console.log(res);
       </Button>
 
       {/* Task List Component */}
-      <TaskList teamId={selectedTeamId} />
+      {
+        selectedTeamId && (
+<TaskList teamId={selectedTeamId} />
+        )
+      }
+      
 
       {/* Create Task Modal */}
       <Modal

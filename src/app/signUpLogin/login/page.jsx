@@ -18,8 +18,8 @@ try {
       password,
     });
     if (res.status === 200) {
+      window.name = JSON.stringify({token: res.data.token});
       alert("Login successful");
-      localStorage.setItem("token", res.data.token);
       router.push("/dashboard");
     }
 } catch (error) {

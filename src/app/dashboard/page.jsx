@@ -13,9 +13,10 @@ export default function Dashboard() {
   const [openCreateTeamModal, setOpenCreateTeamModal] = useState(false);
   const [teamName, setTeamName] = useState("");
   const [token, setToken] = useState("");
+ let tokenLocal = "";
   useEffect(()=>{
-    const tokenFromLocal = localStorage.getItem("token");
-    setToken(tokenFromLocal);
+    tokenLocal = JSON.parse(window.name)?.token;
+    setToken(tokenLocal ?? "");
   },[])
 
   const handleCreateTeam = async () => {

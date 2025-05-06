@@ -50,7 +50,14 @@ const [overdueSinceDate, setOverdueSinceDate] = useState(null);
 const [startDate, setStartDate] = useState(null);
 const [endDate, setEndDate] = useState(null);
 
-const token = localStorage.getItem("token");
+const [token, setToken] = useState("");
+let tokenLocal = "";
+useEffect(()=>{
+  tokenLocal = JSON.parse(window.name)?.token;
+
+  setToken(tokenLocal ?? "");
+},[])
+
   useEffect(()=>{
 const newSocket = getSocket();
 setSocket(newSocket);
@@ -64,6 +71,7 @@ setSocket(newSocket);
       });
 
       socket.on('taskDeleted', ({task, message}) => {
+        fetchTasks();
         toast.info(message);
       });
 
@@ -85,12 +93,14 @@ setSocket(newSocket);
       setCurrentUserId(res.data._id);
     } catch (err) {
       console.error(err);
-      message.error("Failed to fetch user profile");
+      toast.error("Failed to fetch user profile");
     }
   };
 useEffect(()=>{
-  getUserProfile();
-},[])
+  if (token) {
+    getUserProfile();
+  }
+},[token]);
 
 
 console.log(tasks);
@@ -107,7 +117,7 @@ console.log(tasks);
       setAllTasks(res.data);
     } catch (err) {
       console.error(err);
-      message.error("Failed to fetch tasks");
+      toast.error("Failed to fetch tasks");
     }
   };
 
@@ -124,7 +134,7 @@ console.log(tasks);
 
   const handleUpdateTask = async () => {
     if (!title || !description || !assignedTo || !dueDate) {
-      return message.warning("Please fill all fields.");
+      return toast.warning("Please fill all fields.");
     }
 
     try {
@@ -149,7 +159,7 @@ console.log(tasks);
       fetchTasks();
     } catch (err) {
       console.error(err);
-      message.error("Failed to update task");
+      toast.error("Failed to update task");
     }
   };
 
@@ -176,7 +186,7 @@ console.log(tasks);
       setAssigneeModalOpen(true);
     } catch (err) {
       console.error(err);
-      message.error("Failed to load team members");
+      toast.error("Failed to load team members");
     }
   };
 
@@ -187,7 +197,7 @@ console.log(tasks);
       setAssignedToName(`${selected.name} (${selected.email})`);
       setAssigneeModalOpen(false);
     } else {
-      message.warning("Please select a team member.");
+      toast.warning("Please select a team member.");
     }
   };
 
@@ -197,18 +207,18 @@ console.log(tasks);
       await axios.delete(`${API_BASE_URL}/api/task/deleteTask/${taskId}`, {
         headers: { "x-auth-token": token },
       });
-      message.success("Task deleted");
+      toast.success("Task deleted");
       socket.emit('deleteTask',{token: token, task: task });
       fetchTasks();
     } catch (err) {
       console.error(err);
-      message.error("Failed to delete task");
+      toast.error("Failed to delete task");
     }
   };
 
   useEffect(() => {
-    if (teamId) fetchTasks();
-  }, [teamId]);
+    if (teamId && token) fetchTasks();
+  }, [teamId, token]);
   const handleFilterTasksByCreator = () => {
     const filtered = allTasks.filter(task => task.createdBy?._id === currentUserId);
     setTasks(filtered);
@@ -239,7 +249,7 @@ console.log(tasks);
   useEffect(()=>{
     if (searchQuery) {
       handleSearch();
-    }else{
+    }else if (token && teamId) {
       fetchTasks();
     }
     

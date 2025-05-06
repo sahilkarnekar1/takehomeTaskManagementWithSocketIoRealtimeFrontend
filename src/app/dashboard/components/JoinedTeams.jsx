@@ -14,15 +14,19 @@ export default function JoinedTeams() {
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
   const router = useRouter();
 
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState("");
+ let tokenLocal = "";
+  useEffect(()=>{
+    tokenLocal = JSON.parse(window.name)?.token;
+    setToken(tokenLocal ?? "");
+  },[])
 
   useEffect(() => {
     fetchTeams();
-  }, []);
+  }, [token]);
 
   const fetchTeams = async () => {
     if (!token) {
-      toast.error("You must be logged in to view your teams");
       return;
     }
 
