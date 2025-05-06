@@ -1,17 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Card, List, message, Button, Modal, Input, Avatar, Checkbox } from "antd";
+import { Card, List, message, Button, Modal, Input, Avatar, Checkbox, Spin } from "antd";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/app/api/api";
 import { toast } from "react-toastify";
 
-export default function JoinedTeams() {
+export default function JoinedTeams({triggerForFetchTeams}) {
   const [teams, setTeams] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState(null);
   const [nonTeamMembersList, setNonTeamMembersList] = useState([]);
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const [token, setToken] = useState("");
@@ -23,13 +24,13 @@ export default function JoinedTeams() {
 
   useEffect(() => {
     fetchTeams();
-  }, [token]);
+  }, [token,triggerForFetchTeams]);
 
   const fetchTeams = async () => {
     if (!token) {
       return;
     }
-
+setLoading(true);
     try {
       const res = await axios.get(`${API_BASE_URL}/api/team/my-teams`, {
         headers: { "x-auth-token": token },
@@ -38,10 +39,13 @@ export default function JoinedTeams() {
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch teams");
+    }finally{
+      setLoading(false);
     }
   };
 
   const openAddMemberModal = async (teamId) => {
+    setLoading(true);
     try {
       const res = await axios.get(`${API_BASE_URL}/api/team/${teamId}/non-members`, {
         headers: {
@@ -57,6 +61,8 @@ export default function JoinedTeams() {
     } catch (error) {
       console.error(error);
       toast.error("Failed to load available members");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -70,7 +76,7 @@ export default function JoinedTeams() {
     if (!token) return toast.error("Not authenticated");
 
     if (selectedMemberIds.length === 0) return toast.warning("Select at least one user");
-
+setLoading(true);
     try {
       const res = await axios.put(
         `${API_BASE_URL}/api/team/${selectedTeamId}/add-members`,
@@ -83,13 +89,15 @@ export default function JoinedTeams() {
         }
       );
 
-      alert("Members added to team");
+      toast.success("Members added to team");
       setModalOpen(false);
       setSelectedMemberIds([]);
       fetchTeams();
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data || "Failed to add members");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -97,6 +105,8 @@ export default function JoinedTeams() {
   
 
   return (
+    <>
+    
     <div style={{ marginTop: "2rem" }}>
       <h3>Your Teams</h3>
       <List
@@ -166,5 +176,13 @@ export default function JoinedTeams() {
         />
       </Modal>
     </div>
+
+    {loading && (
+          <div className="loaderstylingadjustmentclass">
+        <Spin size="large" />
+        </div>
+        )}
+    </>
+ 
   );
 }

@@ -13,6 +13,7 @@ import {
   Radio,
   Avatar,
   Select,
+  Spin,
 } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -25,7 +26,7 @@ import { API_BASE_URL } from "@/app/api/api";
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
 
-export default function TaskList({ teamId }) {
+export default function TaskList({ teamId, fetchTasksTrigger }) {
   const [tasks, setTasks] = useState([]);
   const [allTasks, setAllTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
@@ -49,6 +50,7 @@ const [dueTillDate, setDueTillDate] = useState(null);
 const [overdueSinceDate, setOverdueSinceDate] = useState(null);
 const [startDate, setStartDate] = useState(null);
 const [endDate, setEndDate] = useState(null);
+const [loading, setLoading] = useState(false);
 
 const [token, setToken] = useState("");
 let tokenLocal = "";
@@ -83,6 +85,7 @@ setSocket(newSocket);
   },[socket]);
 
   const getUserProfile = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `${API_BASE_URL}/api/team/getUserFromToken`,
@@ -94,6 +97,8 @@ setSocket(newSocket);
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch user profile");
+    }finally{
+      setLoading(false);
     }
   };
 useEffect(()=>{
@@ -106,6 +111,7 @@ useEffect(()=>{
 console.log(tasks);
 
   const fetchTasks = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `${API_BASE_URL}/api/task/getMyTasksInTeam/${teamId}`,
@@ -118,6 +124,8 @@ console.log(tasks);
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch tasks");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -136,7 +144,7 @@ console.log(tasks);
     if (!title || !description || !assignedTo || !dueDate) {
       return toast.warning("Please fill all fields.");
     }
-
+setLoading(true);
     try {
       await axios.put(
         `${API_BASE_URL}/api/task/updateTask/${editingTask._id}`,
@@ -153,13 +161,15 @@ console.log(tasks);
           headers: { "x-auth-token": token },
         }
       );
-      alert("Task updated!");
+      toast.success("Task updated!");
       setEditingTask(null);
       resetForm();
       fetchTasks();
     } catch (err) {
       console.error(err);
       toast.error("Failed to update task");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -175,6 +185,7 @@ console.log(tasks);
   };
 
   const openAssigneeModal = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `${API_BASE_URL}/api/team/${teamId}/getTeamMembers`,
@@ -187,6 +198,8 @@ console.log(tasks);
     } catch (err) {
       console.error(err);
       toast.error("Failed to load team members");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -202,6 +215,7 @@ console.log(tasks);
   };
 
   const handleDeleteTask = async (task) => {
+    setLoading(true);
     const taskId = task._id;
     try {
       await axios.delete(`${API_BASE_URL}/api/task/deleteTask/${taskId}`, {
@@ -213,12 +227,14 @@ console.log(tasks);
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete task");
+    }finally{
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     if (teamId && token) fetchTasks();
-  }, [teamId, token]);
+  }, [teamId, token, fetchTasksTrigger]);
   const handleFilterTasksByCreator = () => {
     const filtered = allTasks.filter(task => task.createdBy?._id === currentUserId);
     setTasks(filtered);
@@ -283,7 +299,8 @@ console.log(tasks);
   
 
   return (
-    <div style={{ marginTop: 20 }}>
+    <>
+     <div style={{ marginTop: 20 }}>
       <h2>Team Tasks</h2>
 
       <Input.Search
@@ -499,5 +516,14 @@ fetchTasks();
         </Radio.Group>
       </Modal>
     </div>
+
+
+     {loading && (
+              <div className="loaderstylingadjustmentclass">
+            <Spin size="large" />
+            </div>
+            )}
+    </>
+   
   );
 }

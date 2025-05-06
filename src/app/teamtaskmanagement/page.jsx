@@ -10,6 +10,7 @@ import {
   Avatar,
   Radio,
   Select,
+  Spin,
 } from "antd";
 import axios from "axios";
 import TaskList from "../teamtaskmanagement/components/TaskList";
@@ -33,6 +34,8 @@ export default function TeamTaskManagement() {
   const [selectedMemberId, setSelectedMemberId] = useState("");
   const [socket, setSocket] = useState(null);
   const [selectedTeamId, setselectedTeamId] = useState("");
+  const [fetchTasksTrigger, setFetchTasksTrigger] = useState(false);
+   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState("");
  let tokenLocal = "";
  let selectedTeamIdLocal = "";
@@ -62,7 +65,7 @@ return () => {
     if (!title || !description || !assignedTo || !dueDate) {
       return toast.error("Please fill all fields.");
     }
-
+setLoading(true);
     try {
     const res =  await axios.post(
         `${API_BASE_URL}/api/task/createTask`,
@@ -89,9 +92,12 @@ console.log(res);
       toast.success("Task created!");
       setModalOpen(false);
       resetForm();
+      setFetchTasksTrigger((prev) => !prev); // Trigger re-fetch of tasks
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data || "Failed to create task");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -106,6 +112,7 @@ console.log(res);
   };
 
   const openAssigneeModal = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `${API_BASE_URL}/api/team/${selectedTeamId}/getTeamMembers`,
@@ -120,6 +127,8 @@ console.log(res);
     } catch (err) {
       console.error(err);
       toast.error("Failed to load team members");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -135,7 +144,9 @@ console.log(res);
   };
 
   return (
-    <div>
+
+<>
+<div>
       <h1>Team Task Management</h1>
       <p>Selected Team ID: {selectedTeamId}</p>
 
@@ -146,7 +157,7 @@ console.log(res);
       {/* Task List Component */}
       {
         selectedTeamId && (
-<TaskList teamId={selectedTeamId} />
+<TaskList teamId={selectedTeamId} fetchTasksTrigger={fetchTasksTrigger} />
         )
       }
       
@@ -179,19 +190,23 @@ console.log(res);
           {assignedToName ? `Assigned To: ${assignedToName}` : "Select Assignee"}
         </Button>
 
-        <DatePicker
-          style={{ width: "100%" }}
-          onChange={(date, dateString) => setDueDate(dateString)}
-        />
+        <input
+  type="date"
+  value={dueDate || ""}
+  onChange={(e) => setDueDate(e.target.value)}
+  style={{ width: "100%", marginBottom: "10px" }}
+/>
 
-<Select
-      onChange={(value)=> setPriority(value)}
-      options={[
-        { value: 'High', label: 'High' },
-        { value: 'Medium', label: 'Medium' },
-        { value: 'Low', label: 'Low' },
-      ]}
-    />
+<select
+  value={priority || ""}
+  onChange={(e) => setPriority(e.target.value)}
+  style={{ width: "100%" }}
+>
+  <option value="">Select Priority</option>
+  <option value="High">High</option>
+  <option value="Medium">Medium</option>
+  <option value="Low">Low</option>
+</select>
 
       </Modal>
 
@@ -228,5 +243,15 @@ console.log(res);
         </Radio.Group>
       </Modal>
     </div>
+
+   {loading && (
+          <div className="loaderstylingadjustmentclass">
+        <Spin size="large" />
+        </div>
+        )}
+</>
+
+
+    
   );
 }

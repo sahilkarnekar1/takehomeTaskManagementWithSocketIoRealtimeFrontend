@@ -2,7 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Modal, Input, Button, message } from "antd";
+import { Modal, Input, Button, message, Spin } from "antd";
 import axios from "axios";
 import JoinedTeams from "./components/JoinedTeams";
 import { API_BASE_URL } from "../api/api";
@@ -12,6 +12,8 @@ export default function Dashboard() {
   const router = useRouter();
   const [openCreateTeamModal, setOpenCreateTeamModal] = useState(false);
   const [teamName, setTeamName] = useState("");
+  const [trigger, setTrigger] = useState(false);
+   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState("");
  let tokenLocal = "";
   useEffect(()=>{
@@ -24,7 +26,7 @@ export default function Dashboard() {
       toast.error("You must be logged in");
       return;
     }
-  
+    setLoading(true);
     try {
       const res = await axios.post(
         `${API_BASE_URL}/api/team`,
@@ -38,19 +40,24 @@ export default function Dashboard() {
       );
   
       if (res.status === 201) {
-        alert(`Team "${res.data.name}" created successfully`);
+        toast.success(`Team "${res.data.name}" created successfully`);
         setOpenCreateTeamModal(false);
         setTeamName("");
+        setTrigger((prev) => !prev); // Trigger re-fetch of teams
       } else {
         message.error(`Error: ${res.statusText}`);
       }
     } catch (err) {
       alert("Something went wrong");
       console.error(err);
+    }finally{
+      setLoading(false);
     }
   };
 
   return (
+    <>
+    
     <div style={{ padding: 20 }}>
       <h2>Welcome to Dashboard</h2>
       <Button type="primary" onClick={() => setOpenCreateTeamModal(true)}>
@@ -72,7 +79,15 @@ export default function Dashboard() {
       </Modal>
 
 
-      <JoinedTeams/>
+      <JoinedTeams triggerForFetchTeams = {trigger}/>
     </div>
+
+    {loading && (
+             <div className="loaderstylingadjustmentclass">
+           <Spin size="large" />
+           </div>
+           )}
+    </>
+   
   );
 }
